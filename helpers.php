@@ -10,12 +10,12 @@
 /*                                             */
 /* =========================================== */
 
-!defined('SPK_DO_LOG') && define('SPK_DO_LOG', TRUE);
-!defined('SPK_LOG_DIR') && define('SPK_LOG_DIR', dirname(__FILE__) . '/logs/');
+!defined('SPK_DO_LOG') && define('SPK_DO_LOG', TRUE); // 是否开户日志记录
+!defined('SPK_LOG_DIR') && define('SPK_LOG_DIR', dirname(__FILE__) . '/logs/'); // 日志文件存储的根目录
 
 if (!function_exists('spk_log')) {
     /**
-     * 写日志（只有配置文件\app\config\app.php中的配置项spklog为true时，才会写日志）
+     * 写日志
      * @author SparkLee
      * @since 2015/07/31 10:28
      * @param unknown $logfile_name 带子目录的文件名（如：ad/ad.log），注：文件扩展名必须.log
@@ -43,7 +43,7 @@ if (!function_exists('spk_log')) {
 
             $data = date('Y-m-d H:i:s') . " [{$log_level}] {$title} - " . $data . "\r\n";
 
-            // sdk目录下使用spklog时（sdk客户端发HTTP请求打日志），日志文件中若有中文则会乱码（使用mb_http_input('I')可以检测HTTP输入字符编码），采用以下方式可以解决乱码问题
+            // sdk目录下使用spk_log时（sdk客户端发HTTP请求打日志），日志文件中若有中文则会乱码（使用mb_http_input('I')可以检测HTTP输入字符编码），采用以下方式可以解决乱码问题
             // 如果你在 out_charset 后添加了字符串 //TRANSLIT，将启用转写（transliteration）功能。这个意思是，当一个字符不能被目标字符集所表示时，它可以通过一个或多个形似的字符来近似表达。 如果你添加了字符串 //IGNORE，不能以目标字符集表达的字符将被默默丢弃。 否则，str 从第一个无效字符开始截断并导致一个 E_NOTICE。
             $data = iconv('UTF-8', "GB2312//IGNORE", $data);
             $data = iconv('GB2312', "UTF-8//IGNORE", $data);
