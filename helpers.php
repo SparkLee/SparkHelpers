@@ -10,10 +10,10 @@
 /*                                             */
 /* =========================================== */
 
-define('SPK_DO_LOG', TRUE);
-define('SPK_LOG_DIR', dirname(__FILE__) . '/logs/');
+!defined('SPK_DO_LOG') && define('SPK_DO_LOG', TRUE);
+!defined('SPK_LOG_DIR') && define('SPK_LOG_DIR', dirname(__FILE__) . '/logs/');
 
-if (!function_exists('spklog')) {
+if (!function_exists('spk_log')) {
     /**
      * 写日志（只有配置文件\app\config\app.php中的配置项spklog为true时，才会写日志）
      * @author SparkLee
@@ -27,7 +27,7 @@ if (!function_exists('spklog')) {
      *   FILE_APPEND  If file filename already exists, append the data to the file instead of overwriting it.
      *   LOCK_EX  Acquire an exclusive lock on the file while proceeding to the writing.
      */
-    function spklog($logfile_name, $data, $title='', $log_level = 'INFO',  $flags = FILE_APPEND) {
+    function spk_log($logfile_name, $data, $title='', $log_level = 'INFO',  $flags = FILE_APPEND) {
         if (SPK_DO_LOG) {
             $index_of_last_slash = strrpos($logfile_name, '/');// 最后一个斜杠的位置
             $dir = SPK_LOG_DIR . substr($logfile_name, 0, $index_of_last_slash);            
