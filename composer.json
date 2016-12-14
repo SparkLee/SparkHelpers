@@ -14,7 +14,10 @@
     "autoload": {
         "psr-4": {
             "Sparklee\\SparkHelpers\\": ""
-        }
+        },
+        "files": [
+            "helpers.php"
+        ]
     },
     "minimum-stability": "stable"
 }
