@@ -66,6 +66,31 @@ if (!function_exists('spk_dd')) {
 	}
 }
 
+if (! function_exists('spk_with')) {
+    /**
+     * 返回给定对象，适用于链式操作
+     *
+     * @param  mixed  $object
+     * @return mixed
+     */
+    function spk_with($object)
+    {
+        return $object;
+    }
+}
+
+if (! function_exists('spk_windows_os')) {
+    /**
+     * 判断当前操作系统是否为Windows
+     *
+     * @return bool
+     */
+    function spk_windows_os()
+    {
+        return strtolower(substr(PHP_OS, 0, 3)) === 'win';
+    }
+}
+
 if (!function_exists('spk_float_cut')) {
     /**
      * 保留若干位小数，但不四舍五入
@@ -102,13 +127,26 @@ if(!function_exists('spk_get_http_response_get')) {
      * return 远程输出的数据
      */
     function spk_get_http_response_get($url) {
+        // 1. create a new cURL resource and set URL
         $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_HEADER, 0 );        // 过滤HTTP头
-        curl_setopt($curl,CURLOPT_RETURNTRANSFER, 1);  // 显示输出结果
-        $responseText = curl_exec($curl);
-        //var_dump( curl_error($curl) );//如果执行curl过程中出现异常，可打开此开关，以便查看异常内容
-        curl_close($curl);
+
+        // 2. set other appropriate options
+        curl_setopt($curl, CURLOPT_HEADER, 0 );         // TRUE to include the header in the output.
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);  // TRUE to return the transfer as a string of the return value of curl_exec() instead of outputting it out directly.
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);  // The number of seconds to wait while trying to connect. Use 0 to wait indefinitely.
+        curl_setopt($curl, CURLOPT_TIMEOUT, 5);         // The maximum number of seconds to allow cURL functions to execute.
+
+        // 3. grab URL and return the transfer as a sting
+        $responseText = curl_exec($curl);  // Returns TRUE on success or FALSE on failure. However, if the CURLOPT_RETURNTRANSFER option is set, it will return the result on success, FALSE on failure.
+        $lastErrNo    = curl_errno($curl); // Returns the error number or 0 (zero) if no error occurred.[see: https://curl.haxx.se/libcurl/c/libcurl-errors.html]
+        $lastErrMsg   = curl_error($curl); // Returns the error message or '' (the empty string) if no error occurred.
+        if($lastErrNo != 0) { // 请求有异常
+            // @todo 打日志
+        }
         
+        // 4. close cURL resource, and free up system resources
+        curl_close($curl);
+
         return $responseText;
     }
 }
