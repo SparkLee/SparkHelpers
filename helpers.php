@@ -135,7 +135,7 @@ if(!function_exists('spk_get_http_response_get')) {
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);  // TRUE to return the transfer as a string of the return value of curl_exec() instead of outputting it out directly.
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);  // The number of seconds to wait while trying to connect. Use 0 to wait indefinitely.
         curl_setopt($curl, CURLOPT_TIMEOUT, 5);         // The maximum number of seconds to allow cURL functions to execute.
-        $opts['cookie'] && curl_setopt($curl, CURLOPT_COOKIE, $opts['cookie']);
+        !empty($opts['cookie']) && curl_setopt($curl, CURLOPT_COOKIE, $opts['cookie']);
 
         // 3. grab URL and return the transfer as a sting
         $responseText = curl_exec($curl);  // Returns TRUE on success or FALSE on failure. However, if the CURLOPT_RETURNTRANSFER option is set, it will return the result on success, FALSE on failure.
