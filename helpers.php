@@ -118,6 +118,31 @@ if(!function_exists('spk_human_filesize')) {
     }
 }
 
+if(!function_exists('spk_human_seconds')) {
+    /**
+     * 将时间秒数（此处说的是时间间隔而非时间戳）转化为：多少年多少天多少时多少分多少秒
+     *
+     * @param $seconds 秒数
+     * @return 可读的时间间隔
+     */
+    function spk_human_seconds($seconds) {
+        $seconds = intval($seconds);
+        $t = [
+            '年' => 31536000,
+            '天' => 86400,
+            '时' => 3600,
+            '分' => 60,
+            '秒' => 1,
+        ];
+        $s = '';
+        foreach ($t as $k => $v) {
+            if($seconds >= $v) $s .= floor($seconds / $v) . $k;
+            $seconds %= $v;
+        }
+        return $s;
+    }
+}
+
 if(!function_exists('spk_get_http_response_get')) {
     /**
      * 远程获取数据，GET模式
