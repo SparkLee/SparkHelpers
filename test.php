@@ -5,4 +5,4 @@
 header("Content-type: text/html; charset=utf-8");
 include 'helpers.php';
 
-spk_dd(spk_human_seconds(365*2*24*60*60));
+spk_dd(spk_is_valide_x('email', 'liweijsj@163.com'));

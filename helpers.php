@@ -149,7 +149,7 @@ if(!function_exists('spk_get_http_response_get')) {
      * 注意：
      * 1.使用Crul需要修改服务器中php.ini文件的设置，找到php_curl.dll去掉前面的";"就行了
      * @param $url 指定URL完整路径地址
-     * return 远程输出的数据
+     * @return 远程输出的数据
      */
     function spk_get_http_response_get($url, $opts = []) {
         // 1. create a new cURL resource and set URL
@@ -185,7 +185,7 @@ if(!function_exists('spk_get_http_response_post')) {
      * @param $url 指定URL完整路径地址
      * @param $para 请求的数据
      * @param $input_charset 编码格式。默认值：空值
-     * return 远程输出的数据
+     * @return 远程输出的数据
      */
     function spk_get_http_response_post($url, $para, $input_charset = '') {
         if (trim($input_charset) != '') {
@@ -201,5 +201,27 @@ if(!function_exists('spk_get_http_response_post')) {
         curl_close($curl);
         
         return $responseText;
+    }
+}
+
+if(!function_exists('spk_is_valide_x')) {
+    /**
+     * 正则验证指定内容的合法性
+     *
+     * @param $xtype    待验证内容的类型
+     * @param $xcontent 待验证内容
+     * @return bool     true:合法 false:非法
+     */
+    function spk_is_valide_x($xtype, $xcontent) {
+        $regx_rule = [
+            'phone' => '/^1[34578][0-9]{1}[0-9]{8}$/',                             // 手机号码验证规则
+            'email' => '/[_a-zA-Z\d\-\.]+(@[_a-zA-Z\d\-\.]+\.[_a-zA-Z\d\-]+)+$/i', // 邮箱验证规则
+        ];
+
+        if(preg_match($regx_rule[$xtype], $xcontent)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
