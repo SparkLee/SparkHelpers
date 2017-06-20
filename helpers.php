@@ -120,25 +120,42 @@ if(!function_exists('spk_human_filesize')) {
 
 if(!function_exists('spk_human_seconds')) {
     /**
-     * 将时间秒数（此处说的是时间间隔而非时间戳）转化为：多少年多少天多少时多少分多少秒
+     * 格式化时间秒数（此处说的是时间间隔而非时间戳）
      *
      * @param $seconds 秒数
+     * @param $format
+     *        1: 多少年多少天多少时多少分多少秒
+     *        2: 多少年前 OR 多少天前 OR 多少小时前 OR 多少分钟前 OR 多少秒前
      * @return 可读的时间间隔
      */
-    function spk_human_seconds($seconds) {
+    function spk_human_seconds($seconds, $format = 1) {
         $seconds = intval($seconds);
         $t = [
-            '年' => 31536000,
-            '天' => 86400,
-            '时' => 3600,
-            '分' => 60,
-            '秒' => 1,
+            31536000 => ['年', '年前'],
+            86400    => ['天', '天前'],
+            3600     => ['时', '小时前'],
+            60       => ['分', '分钟前'],
+            1        => ['秒', '秒前'],
         ];
         $s = '';
-        foreach ($t as $k => $v) {
-            if($seconds >= $v) $s .= floor($seconds / $v) . $k;
-            $seconds %= $v;
+        switch ($format) {
+            case 2:
+                foreach ($t as $k => $v) {
+                    if($seconds >= $k) {
+                        $s = floor($seconds / $k) . $v[1];
+                        break;
+                    }                 
+                }
+                break;
+            
+            default:
+                foreach ($t as $k => $v) {
+                    if($seconds >= $k) $s .= floor($seconds / $k) . $v[0];
+                    $seconds %= $k;
+                }
+                break;
         }
+        
         return $s;
     }
 }
