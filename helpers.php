@@ -59,9 +59,11 @@ if (!function_exists('spk_dd')) {
      */
 	function spk_dd() {
 	    $args = func_get_args();
+        echo "<pre>";
 	    foreach ($args as $arg) {
 	        var_dump($arg);
 	    }
+        echo "</pre>";
 	    die;
 	}
 }
