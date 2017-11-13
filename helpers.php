@@ -132,6 +132,9 @@ if(!function_exists('spk_human_seconds')) {
      */
     function spk_human_seconds($seconds, $format = 1) {
         $seconds = intval($seconds);
+
+        if($seconds == 0) return '刚刚';
+        
         $t = [
             31536000 => ['年', '年前'],
             86400    => ['天', '天前'],
