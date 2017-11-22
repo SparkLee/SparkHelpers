@@ -167,60 +167,89 @@ if(!function_exists('spk_human_seconds')) {
 
 if(!function_exists('spk_get_http_response_get')) {
     /**
-     * 远程获取数据，GET模式
-     * 注意：
-     * 1.使用Crul需要修改服务器中php.ini文件的设置，找到php_curl.dll去掉前面的";"就行了
-     * @param $url 指定URL完整路径地址
-     * @return 远程输出的数据
+     * HTTP GET请求
+     *
+     * 示例：spk_get_http_response_post('http://www.domain.com/', ['timeout' => '200ms','return_error'=> 1])
      */
     function spk_get_http_response_get($url, $opts = []) {
-        // 1. create a new cURL resource and set URL
-        $curl = curl_init($url);
-
-        // 2. set other appropriate options
-        curl_setopt($curl, CURLOPT_HEADER, 0 );         // TRUE to include the header in the output.
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);  // TRUE to return the transfer as a string of the return value of curl_exec() instead of outputting it out directly.
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);  // The number of seconds to wait while trying to connect. Use 0 to wait indefinitely.
-        curl_setopt($curl, CURLOPT_TIMEOUT, 5);         // The maximum number of seconds to allow cURL functions to execute.
-        !empty($opts['cookie']) && curl_setopt($curl, CURLOPT_COOKIE, $opts['cookie']);
-
-        // 3. grab URL and return the transfer as a sting
-        $responseText = curl_exec($curl);  // Returns TRUE on success or FALSE on failure. However, if the CURLOPT_RETURNTRANSFER option is set, it will return the result on success, FALSE on failure.
-        $lastErrNo    = curl_errno($curl); // Returns the error number or 0 (zero) if no error occurred.[see: https://curl.haxx.se/libcurl/c/libcurl-errors.html]
-        $lastErrMsg   = curl_error($curl); // Returns the error message or '' (the empty string) if no error occurred.
-        if($lastErrNo != 0) { // 请求有异常
-            // @todo 打日志
-        }
-        
-        // 4. close cURL resource, and free up system resources
-        curl_close($curl);
-
-        return $responseText;
+        return spk_get_http_response($url, 'get', [], $opts);
     }
 }
 
 if(!function_exists('spk_get_http_response_post')) {
     /**
-     * 远程获取数据，POST模式
-     * 注意：
-     * 1.使用Crul需要修改服务器中php.ini文件的设置，找到php_curl.dll去掉前面的";"就行了
-     * @param $url 指定URL完整路径地址
-     * @param $para 请求的数据
-     * @param $input_charset 编码格式。默认值：空值
+     * HTTP POST请求
+     * 
+     * 示例：spk_get_http_response_post('http://www.domain.com/', ['name' => 'sparklee'], ['timeout' => '200ms','return_error'=> 1])
+     */
+    function spk_get_http_response_post($url, $para = [], $opts = []) {
+        return spk_get_http_response($url, 'post', $para, $opts);
+    }
+}
+
+if(!function_exists('spk_get_http_response')) {
+    /**
+     * 发起HTTP请求，获取远程数据
+     * @param $url    指定URL完整路径地址
+     * @param $method HTTP请求方法
+     * @param $para   请求的数据
+     * @param $opts   定制选项
      * @return 远程输出的数据
      */
-    function spk_get_http_response_post($url, $para, $input_charset = '') {
-        if (trim($input_charset) != '') {
-            $url = $url."_input_charset=".$input_charset;
-        }
+    function spk_get_http_response($url, $method = 'get', $para = [], $opts = []) {
+        // 1. 创建一个cURL Resource，并且设置请求地址
         $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_HEADER, 0 ); // 过滤HTTP头
-        curl_setopt($curl,CURLOPT_RETURNTRANSFER, 1);// 显示输出结果
-        curl_setopt($curl,CURLOPT_POST,true); // post传输数据
-        curl_setopt($curl,CURLOPT_POSTFIELDS,$para);// post传输数据
-        $responseText = curl_exec($curl);
-        //var_dump( curl_error($curl) );//如果执行curl过程中出现异常，可打开此开关，以便查看异常内容
+
+        // 2. 设置其他选项
+        curl_setopt($curl, CURLOPT_HEADER, 0 );         // TRUE to include the header in the output. 0：过滤HTTP头
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);  // TRUE to return the transfer as a string of the return value of curl_exec() instead of outputting it out directly.
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);  // The number of seconds to wait while trying to connect. Use 0 to wait indefinitely.
+
+        // 2.1. The maximum number of seconds to allow cURL functions to execute：如果$opts['timeout']设置为0，则相当于cURL执行永不超时
+        if(isset($opts['timeout'])) {
+            // 毫秒级
+            if(substr($opts['timeout'], -2) == 'ms') {
+                $_timeout = intval(str_replace('ms', '', $opts['timeout']));
+                curl_setopt($curl, CURLOPT_TIMEOUT_MS, $_timeout);
+
+                // libcurl在(Li|U)nix操作系统下如果设置了小于1000ms的超时以后, curl不会发起任何请求, 而直接返回超时错误(Timeout reached 28)。需要添加CURLOPT_NOSIGNAL选项以解决此问题。
+                // @see：惠新辰-Curl的毫秒超时的一个Bug：http://www.laruence.com/2014/01/21/2939.html
+                // @see: php curl CURLOPT_TIMEOUT_MS 小于1秒 解决方案：https://www.cnblogs.com/sky20081816/archive/2013/05/30/3108657.html
+                curl_setopt($curl, CURLOPT_NOSIGNAL, 1);
+                
+            // 秒级[不带超时单位，默认为秒]
+            } else {
+                $_timeout = intval(str_replace('s', '', $opts['timeout']));
+                curl_setopt($curl, CURLOPT_TIMEOUT, $_timeout);
+            }
+
+           unset($_timeout);
+        } else {
+            curl_setopt($curl, CURLOPT_TIMEOUT, 3);
+        }
+
+        // 2.2. cookie设置
+        !empty($opts['cookie']) && curl_setopt($curl, CURLOPT_COOKIE, $opts['cookie']);
+
+        // 2.3. POST请求特殊选项
+        if(strtolower($method) == 'post') {
+            curl_setopt($curl,CURLOPT_POST, true);
+            curl_setopt($curl,CURLOPT_POSTFIELDS, $para); // post传输数据
+        }
+
+        // 3. grab URL and return the transfer as a sting
+        $responseText = curl_exec($curl);  // Returns TRUE on success or FALSE on failure. However, if the CURLOPT_RETURNTRANSFER option is set, it will return the result on success, FALSE on failure.
+        $lastErrNo    = curl_errno($curl); // Returns the error number or 0 (zero) if no error occurred.[see: https://curl.haxx.se/libcurl/c/libcurl-errors.html]
+        $lastErrMsg   = curl_error($curl); // Returns the error message or '' (the empty string) if no error occurred.
+
+        // 4. close cURL resource, and free up system resources
         curl_close($curl);
+
+        if($lastErrNo != 0) { // 请求有异常
+            if(!empty($opts['return_error'])) {
+                return "cURL异常：error_no={$lastErrNo} | error_msg={$lastErrMsg} | ".__FILE__.'->'.__FUNCTION__.'('.__LINE__.')';
+            }            
+        }
         
         return $responseText;
     }

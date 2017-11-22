@@ -8,4 +8,5 @@ ini_set('error_reporting', E_ALL);
 header("Content-type: text/html; charset=utf-8");
 include 'helpers.php';
 
-spk_dd(spk_human_seconds(0.2));
+// spk_dd(spk_get_http_response_get('http://local.ts.huaray.com/api.php?mod=Public&act=x'));
+spk_dd(spk_get_http_response_post('http://local.ts.huaray.com/api.php?mod=Public&act=x', [], ['timeout' => '200ms','return_error'=> 1]));
