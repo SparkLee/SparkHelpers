@@ -313,7 +313,7 @@ if(!function_exists('spk_is_valide_x')) {
      */
     function spk_is_valide_x($xtype, $xcontent) {
         $regx_rule = [
-            'phone' => '/^1[34578][0-9]{1}[0-9]{8}$/',                             // 手机号码验证规则
+            'phone' => '/^1[3456789][0-9]{1}[0-9]{8}$/',                             // 手机号码验证规则
             'email' => '/[_a-zA-Z\d\-\.]+(@[_a-zA-Z\d\-\.]+\.[_a-zA-Z\d\-]+)+$/i', // 邮箱验证规则
         ];
 
