@@ -38,7 +38,7 @@ if (!function_exists('spk_log')) {
 
             // 非字符串的，一律转换为json字符串
             if(!is_string($data)) {
-            	$data = json_encode($data, JSON_UNESCAPED_UNICODE);
+                $data = json_encode($data, JSON_UNESCAPED_UNICODE);
             }
 
             $data = date('Y-m-d H:i:s') . " [{$log_level}] {$title} - " . $data . "\r\n";
@@ -57,15 +57,15 @@ if (!function_exists('spk_dd')) {
     /**
      * 打印给定内容并结束脚本
      */
-	function spk_dd() {
-	    $args = func_get_args();
+    function spk_dd() {
+        $args = func_get_args();
         echo "<pre>";
-	    foreach ($args as $arg) {
-	        var_dump($arg);
-	    }
+        foreach ($args as $arg) {
+            var_dump($arg);
+        }
         echo "</pre>";
-	    die;
-	}
+        die;
+    }
 }
 
 if (! function_exists('spk_with')) {
@@ -231,7 +231,10 @@ if(!function_exists('spk_get_http_response')) {
         // 2.2. cookie设置
         !empty($opts['cookie']) && curl_setopt($curl, CURLOPT_COOKIE, $opts['cookie']);
 
-        // 2.3. POST请求特殊选项
+        // 2.3 ua设置
+        !empty($opts['useragent']) && curl_setopt($curl, CURLOPT_USERAGENT, $opts['useragent']);
+
+        // 2.4. POST请求特殊选项
         if(strtolower($method) == 'post') {
             curl_setopt($curl,CURLOPT_POST, true);
             curl_setopt($curl,CURLOPT_POSTFIELDS, $para); // post传输数据
@@ -313,7 +316,7 @@ if(!function_exists('spk_is_valide_x')) {
      */
     function spk_is_valide_x($xtype, $xcontent) {
         $regx_rule = [
-            'phone' => '/^1[3456789][0-9]{1}[0-9]{8}$/',                             // 手机号码验证规则
+            'phone' => '/^1[3456789][0-9]{1}[0-9]{8}$/',                           // 手机号码验证规则
             'email' => '/[_a-zA-Z\d\-\.]+(@[_a-zA-Z\d\-\.]+\.[_a-zA-Z\d\-]+)+$/i', // 邮箱验证规则
         ];
 
