@@ -234,7 +234,10 @@ if(!function_exists('spk_get_http_response')) {
         // 2.3 ua设置
         !empty($opts['useragent']) && curl_setopt($curl, CURLOPT_USERAGENT, $opts['useragent']);
 
-        // 2.4. POST请求特殊选项
+        // 2.4 代理设置
+        !empty($opts['proxy']) && curl_setopt ($curl, CURLOPT_PROXY, $opts['proxy']);
+
+        // 2.5. POST请求特殊选项
         if(strtolower($method) == 'post') {
             curl_setopt($curl,CURLOPT_POST, true);
             curl_setopt($curl,CURLOPT_POSTFIELDS, $para); // post传输数据
