@@ -234,7 +234,7 @@ if(!function_exists('spk_get_http_response')) {
         // 2.3 ua设置
         !empty($opts['useragent']) && curl_setopt($curl, CURLOPT_USERAGENT, $opts['useragent']);
 
-        // 2.4 代理设置
+        // 2.4 代理设置（一般用于测试，可在本地开启Fiddler抓包调试，Fiddler默认端口是888；示例：$opts['proxy'] = '127.0.0.1:8888'）
         !empty($opts['proxy']) && curl_setopt ($curl, CURLOPT_PROXY, $opts['proxy']);
 
         // 2.5. POST请求特殊选项
