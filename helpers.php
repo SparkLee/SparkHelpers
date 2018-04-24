@@ -204,6 +204,7 @@ if(!function_exists('spk_get_http_response')) {
         curl_setopt($curl, CURLOPT_HEADER, 0 );         // TRUE to include the header in the output. 0：过滤HTTP头
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);  // TRUE to return the transfer as a string of the return value of curl_exec() instead of outputting it out directly.
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);  // The number of seconds to wait while trying to connect. Use 0 to wait indefinitely.
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); // 不验证请求地址的https证书
 
         // 2.1. The maximum number of seconds to allow cURL functions to execute：如果$opts['timeout']设置为0，则相当于cURL执行永不超时
         if(isset($opts['timeout'])) {
@@ -254,20 +255,22 @@ if(!function_exists('spk_get_http_response')) {
             curl_setopt($curl,CURLOPT_POSTFIELDS, $para);
         }
 
+        // 2.6 请求头（$opts['httpheader'] = ["Content-Type: text/xml; charset=utf-8", "Expect: 100-continue", "Authorization:APPCODE xxxxxx", ......]）
+        !empty($opts['httpheader']) && curl_setopt($curl, CURLOPT_HTTPHEADER, $opts['httpheader']);
+
         // 3. grab URL and return the transfer as a sting
         $responseText = curl_exec($curl);  // Returns TRUE on success or FALSE on failure. However, if the CURLOPT_RETURNTRANSFER option is set, it will return the result on success, FALSE on failure.
         $lastErrNo    = curl_errno($curl); // Returns the error number or 0 (zero) if no error occurred.[see: https://curl.haxx.se/libcurl/c/libcurl-errors.html]
         $lastErrMsg   = curl_error($curl); // Returns the error message or '' (the empty string) if no error occurred.
+        $responseInfo = curl_getinfo($curl); // Get information regarding a specific transfer
 
         // 4. close cURL resource, and free up system resources
         curl_close($curl);
 
-        if($lastErrNo != 0) { // 请求有异常
-            if(!empty($opts['return_error'])) {
-                return "cURL异常：error_no={$lastErrNo} | error_msg={$lastErrMsg} | ".__FILE__.'->'.__FUNCTION__.'('.__LINE__.')';
-            }            
+        if(!empty($opts['return_error'])) {
+           if(in_array($responseInfo['http_code'], [400, 403])) return "response_info=".json_encode($responseInfo, JSON_UNESCAPED_UNICODE);  // 响应结果协议级别有异常
+           if($lastErrNo) return "cURL异常：error_no={$lastErrNo} | error_msg={$lastErrMsg} | ".__FILE__.'->'.__FUNCTION__.'('.__LINE__.')'; // 响应结果业务级别有异常
         }
-        
         return $responseText;
     }
 }
