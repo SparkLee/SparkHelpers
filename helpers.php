@@ -245,7 +245,7 @@ if(!function_exists('spk_get_http_response')) {
             // POST请求数据
             // 如果$para是urlencoded字符串形式即'para1=val1&para2=val2&...'，则请求的Content-Type为application/x-www-form-urlencoded
             // 如果$para是数组，则Content-Type会被设置为multipart/form-data。由于表单上传文件时Content-Type要设置为multipart/form-data，故如果要上传文件则$para必须是数组
-            if($opts['postdata_str']) {
+            if(!empty($opts['postdata_str'])) {
                 $_tmp_para = '';
                 foreach ($para as $key => $value) {
                     $_tmp_para .= "{$key}={$value}&";
