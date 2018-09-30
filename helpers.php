@@ -344,3 +344,51 @@ if(!function_exists('spk_is_valide_x')) {
         }
     }
 }
+
+if(!function_exists('spk_gen_md5_sign')) {
+    /**
+     * 使用MD5算法，生成指定参数数组数据对应的签名字符串
+     *
+     * @see 签名算法参考微信支付的签名算法：https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=4_3
+     *
+     * @param  array  $param 待签名的数据
+     * @param  string $token 签名密钥
+     * @return string 签名字符串
+     */
+    function spk_gen_md5_sign($data, $token) {
+        // 0、待签名数据必须是非空数组
+        if(empty($data) || !is_array($data)) {
+            return "";
+        }
+
+        // 1、过滤掉空值参数（值恒等于空的参数，亦即值为0或0.00的参数正常参与签名）和签名参数
+        $data_filter = [];
+        foreach ($data as $key => $val) {
+            if($key == "sign" || $val === "") continue;
+            $data_filter[$key] = $val;
+        }
+        unset($key, $val);
+
+        // 2、按参数名ASCII码正序排序
+        ksort($data_filter);
+        reset($data_filter); // 将排序后数组的内部指针指向第一个单元
+        
+        // 3、使用URL键值对的格式（即key1=value1&key2=value2…）拼接成字符串
+        $str  = "";
+        foreach ($data_filter as $key => $val) {
+            $str .= "{$key}={$val}&"; // 注：值没有urlencode，而是原样参与签名
+        }
+        unset($key, $val);
+
+        // 4、拼接密钥
+        $str .= "token={$token}"; // 注：上文的$str的末尾有一个"&"，以处无需再加"&"
+
+        // 5、MD5签名
+        $sign = md5($str);
+
+        // 6、签名转大写
+        $sign = strtoupper($sign);
+
+        return $sign;
+    }
+}
