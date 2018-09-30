@@ -268,9 +268,18 @@ if(!function_exists('spk_get_http_response')) {
         curl_close($curl);
 
         if(!empty($opts['return_error'])) {
-           if(in_array($responseInfo['http_code'], [400, 403])) return "response_info=".json_encode($responseInfo, JSON_UNESCAPED_UNICODE);  // 响应结果协议级别有异常
-           if($lastErrNo) return "cURL异常：error_no={$lastErrNo} | error_msg={$lastErrMsg} | ".__FILE__.'->'.__FUNCTION__.'('.__LINE__.')'; // 响应结果业务级别有异常
+           if($lastErrNo) return "cURL异常：error_no={$lastErrNo} | error_msg={$lastErrMsg} | ".__FILE__.'->'.__FUNCTION__.'('.__LINE__.')'; // 如：error_no=6，域名无法解析
+
+           if(in_array($responseInfo['http_code'], [400, 403])) return "response_info=".json_encode($responseInfo, JSON_UNESCAPED_UNICODE);
         }
+
+        if(!empty($opts['return_with_info'])) { // 请求响应结果和请求其他响应信息一同返回，方便分析或记录请求的响应详细情况，如：请求响应状态，请求耗时等
+            return [
+                'responseText' => $responseText,
+                'responseInfo' => $responseInfo,
+            ];
+        }
+
         return $responseText;
     }
 }
