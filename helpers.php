@@ -277,6 +277,7 @@ if(!function_exists('spk_get_http_response')) {
             return [
                 'responseText' => $responseText,
                 'responseInfo' => $responseInfo,
+                'responseErr'  => ['lastErrNo' => $lastErrNo, 'lastErrMsg' => $lastErrMsg],
             ];
         }
 
