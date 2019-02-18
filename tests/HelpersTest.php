@@ -10,7 +10,7 @@ class HelpersTest extends PHPUnit_Framework_TestCase {
      * @dataProvider providerSpkIsValideX
      */
 	public function testSpkIsValideX($xtype, $xcontent, $res) {
-		$this->assertEquals(spk_is_valide_x($xtype, $xcontent), $res);
+		$this->assertEquals($res, spk_is_valide_x($xtype, $xcontent));
 	}
 	// 数据提供器（Data Provider）
 	// 参考1：http://www.phpunit.cn/manual/5.7/zh_cn/writing-tests-for-phpunit.html
