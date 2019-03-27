@@ -165,6 +165,22 @@ if(!function_exists('spk_human_seconds')) {
     }
 }
 
+if(!function_exists('spk_format_ts')) {
+    /**
+     * 格式化时间戳，时间戳为0或为空时支持返回默认值
+     *
+     * @param  int    $timestamp 时间戳
+     * @param  string $default   默认值
+     * @param  string $format    格式化格式
+     * @return string 格式化的时间字符串
+     */
+    function spk_format_ts($timestamp, $default = '', $format = 'Y-m-d H:i:s') {
+        if(empty($timestamp)) return $default;
+
+        return date($format, $timestamp);
+    }
+}
+
 if(!function_exists('spk_get_http_response_get')) {
     /**
      * HTTP GET请求
