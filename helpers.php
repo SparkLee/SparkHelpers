@@ -460,3 +460,58 @@ if (!function_exists('spk_gen_md5_sign')) {
         return $sign;
     }
 }
+
+if (!function_exists('spk_default')) {
+    /**
+     * 当变量为空时，用默认值替代
+     *
+     * @param mixed $var
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    function spk_default($var, $default)
+    {
+        return empty($var) ? $default : $var;
+    }
+}
+
+if (!function_exists('spk_throw_if')) {
+    /**
+     * Throw the given exception if the given condition is true.
+     *
+     * @param mixed $condition
+     * @param array ...$parameters
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    function spk_throw_if($condition, ...$parameters)
+    {
+        if ($condition) {
+            throw new \Exception(...$parameters);
+        }
+
+        return $condition;
+    }
+}
+
+if (!function_exists('spk_throw_unless')) {
+    /**
+     * Throw the given exception unless the given condition is true.
+     *
+     * @param mixed $condition
+     * @param array ...$parameters
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    function spk_throw_unless($condition, ...$parameters)
+    {
+        if (!$condition) {
+            throw new \Exception(...$parameters);
+        }
+
+        return $condition;
+    }
+}
