@@ -100,52 +100,34 @@ class HelpersTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Exception
-     * @throws Throwable
-     */
-    public function test_spk_throw_if()
-    {
-        spk_throw_if(true);
-    }
-
-    /**
-     * @expectedException \Exception
      * @expectedExceptionMessage 校验失败
      * @throws Throwable
      */
     public function test_spk_throw_if_with_message()
     {
-        spk_throw_if(true, '校验失败');
+        spk_throw_if(true, '\\Exception', '校验失败');
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage 验签失败
      * @expectedExceptionCode 1001
      * @throws Throwable
      */
     public function test_spk_throw_if_with_message_code()
     {
-        spk_throw_if('xxx' != 'yyy', '验签失败', 1001);
+        spk_throw_if('xxx' != 'yyy', '\\InvalidArgumentException', '验签失败', 1001);
     }
 
     /**
-     * @expectedException \Exception
-     * @throws Throwable
-     */
-    public function test_spk_throw_unless()
-    {
-        spk_throw_unless(false);
-    }
-
-    /**
-     * @expectedException \Exception
+     * @expectedException \ErrorException
      * @expectedExceptionMessage 1怎么能小于0呢
      * @expectedExceptionCode 111
      * @throws Throwable
      */
     public function test_spk_throw_unless_with_message_code()
     {
-        spk_throw_unless(1 < 0, '1怎么能小于0呢', 111);
+        spk_throw_unless(1 < 0, '\\ErrorException', '1怎么能小于0呢', 111);
     }
 }
 
