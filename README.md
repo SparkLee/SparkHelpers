@@ -9,5 +9,5 @@
 ### 安装开发版
 开发期间，你也可以安装master分支下的最新内容：
 ```shell script
-composer require sparklee/spark-helpers:~1.0@dev
+composer remquire --prefer-dist sparklee/spark-helpers:~1.0@dev
 ```
