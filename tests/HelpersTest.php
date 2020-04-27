@@ -129,5 +129,11 @@ class HelpersTest extends PHPUnit_Framework_TestCase
     {
         spk_throw_unless(1 < 0, '\\ErrorException', '1怎么能小于0呢', 111);
     }
+
+    public function test_spk_snake_to_camel()
+    {
+        $this->assertEquals('getLastName', spk_snake_to_camel('getLastName'));
+        $this->assertEquals('getLastName', spk_snake_to_camel('get_last_name'));
+    }
 }
 

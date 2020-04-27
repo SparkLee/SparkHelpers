@@ -518,3 +518,21 @@ if (!function_exists('spk_throw_unless')) {
         return $condition;
     }
 }
+
+if (!function_exists('spk_snake_to_camel')) {
+    /**
+     * 蛇形字符串转驼峰字符串
+     *
+     * @param string $str 蛇形命名字符串，示例：get_last_name
+     *
+     * @return string 驼峰命名字符串，示例：getLastName
+     */
+    function spk_snake_to_camel($str)
+    {
+        $arr = explode('_', $str);
+        $result = array_reduce($arr, function ($carry, $item) {
+            return $carry .= ucfirst($item);
+        }, '');
+        return lcfirst($result);
+    }
+}
